@@ -1,4 +1,4 @@
-import { Cpu, Sparkles } from "lucide-react";
+import Image from "next/image";`nimport { Cpu, Sparkles } from "lucide-react";
 import { AiIqWebglScene } from "@/components/ai-iq-webgl-scene";
 import { Button } from "@/components/ui/button";
 
@@ -145,9 +145,21 @@ export default function Home() {
         <AiIqWebglScene />
         <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 py-14 sm:px-10 lg:grid-cols-[0.98fr_1.02fr] lg:px-12">
           <div className="max-w-3xl">
-            <div className="mb-6 inline-flex items-center gap-2 border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur-md">
-              <Cpu className="size-4" aria-hidden="true" />
-              DexLabs AI x Dabble College
+            <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="w-fit border border-cyan-300/25 bg-white px-3 py-2 shadow-[0_0_34px_rgba(34,211,238,0.24)]">
+                <Image
+                  src="/dextest-logo.jpeg"
+                  alt="DexTest logo"
+                  width={320}
+                  height={180}
+                  priority
+                  className="h-14 w-auto object-contain sm:h-16"
+                />
+              </div>
+              <div className="inline-flex w-fit items-center gap-2 border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur-md">
+                <Cpu className="size-4" aria-hidden="true" />
+                DexLabs AI x Dabble College
+              </div>
             </div>
             <h1 className="text-5xl font-semibold leading-none text-white sm:text-6xl lg:text-7xl">
               Discover Your Child&apos;s AI Readiness Score
@@ -446,6 +458,15 @@ export default function Home() {
 
       <section className="px-6 pb-20 sm:px-10 lg:px-12">
         <div className="mx-auto max-w-7xl border border-cyan-300/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.16),rgba(2,6,23,0.96))] p-8 text-center shadow-[0_0_80px_rgba(14,165,233,0.18)] sm:p-12">
+          <div className="mx-auto mb-6 w-fit border border-cyan-300/25 bg-white px-3 py-2 shadow-[0_0_34px_rgba(34,211,238,0.2)]">
+            <Image
+              src="/dextest-logo.jpeg"
+              alt="DexTest logo"
+              width={320}
+              height={180}
+              className="h-12 w-auto object-contain sm:h-14"
+            />
+          </div>
           <p className="text-sm font-semibold uppercase text-cyan-200">Final CTA</p>
           <h2 className="mx-auto mt-3 max-w-3xl text-3xl font-semibold text-white sm:text-5xl">
             Know your child&apos;s AI readiness score and discover the right learning path.
