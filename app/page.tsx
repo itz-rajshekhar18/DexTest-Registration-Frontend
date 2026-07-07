@@ -1,4 +1,5 @@
-import Image from "next/image";`nimport { Cpu, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { Cpu, Sparkles } from "lucide-react";
 import { AiIqWebglScene } from "@/components/ai-iq-webgl-scene";
 import { Button } from "@/components/ui/button";
 
