@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { Cpu, Sparkles } from "lucide-react";
 import { AiIqWebglScene } from "@/components/ai-iq-webgl-scene";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const measures = [
   {
@@ -140,6 +143,65 @@ function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: stri
 }
 
 export default function Home() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      studentName: formData.get('studentName') as string,
+      class: formData.get('class') as string,
+      schoolName: formData.get('schoolName') as string,
+      age: parseInt(formData.get('age') as string),
+      city: formData.get('city') as string,
+      parentName: formData.get('parentName') as string,
+      mobile: formData.get('mobile') as string,
+      whatsapp: formData.get('whatsapp') as string,
+      email: formData.get('email') as string,
+      programInterest: formData.get('programInterest') as string,
+      testMode: formData.get('testMode') as string,
+      counsellingSlot: formData.get('counsellingSlot') as string,
+    };
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${apiUrl}/api/registrations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setSubmitStatus({
+          type: 'success',
+          message: 'Registration submitted successfully! We will contact you soon.',
+        });
+        e.currentTarget.reset();
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: result.message || 'Failed to submit registration. Please try again.',
+        });
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Network error. Please check your connection and try again.',
+      });
+      console.error('Registration error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#03070d] text-slate-100">
       <section className="relative min-h-screen overflow-hidden border-b border-cyan-300/10 bg-[#03070d]">
@@ -147,14 +209,14 @@ export default function Home() {
         <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 py-14 sm:px-10 lg:grid-cols-[0.98fr_1.02fr] lg:px-12">
           <div className="max-w-3xl">
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="w-fit border border-cyan-300/25 bg-white px-3 py-2 shadow-[0_0_34px_rgba(34,211,238,0.24)]">
+              <div className="w-fit">
                 <Image
                   src="/dextest-logo.jpeg"
                   alt="DexTest logo"
                   width={320}
                   height={180}
                   priority
-                  className="h-14 w-auto object-contain sm:h-16"
+                  className="h-14 w-auto object-contain mix-blend-screen sm:h-16"
                 />
               </div>
               <div className="inline-flex w-fit items-center gap-2 border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-medium text-cyan-100 backdrop-blur-md">
@@ -307,7 +369,16 @@ export default function Home() {
             title="Register for the AI IQ Test"
             copy="Share student and parent details so the team can coordinate the test, report, counselling, and admission support."
           />
-          <form className="mx-auto grid max-w-5xl gap-6 border border-cyan-300/20 bg-black/45 p-5 shadow-[0_0_70px_rgba(14,165,233,0.16)] sm:p-8">
+          <form onSubmit={handleSubmit} className="mx-auto grid max-w-5xl gap-6 border border-cyan-300/20 bg-black/45 p-5 shadow-[0_0_70px_rgba(14,165,233,0.16)] sm:p-8">
+            {submitStatus && (
+              <div className={`border p-4 text-sm ${
+                submitStatus.type === 'success' 
+                  ? 'border-green-500/30 bg-green-500/10 text-green-200' 
+                  : 'border-red-500/30 bg-red-500/10 text-red-200'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
             <div className="grid gap-5 md:grid-cols-2">
               <div className={fieldClass}>
                 <label className={labelClass} htmlFor="student-name">Student Name</label>
@@ -385,9 +456,10 @@ export default function Home() {
             </p>
             <Button
               type="submit"
-              className="min-h-12 rounded-none border border-cyan-200 bg-cyan-300 px-6 py-3 text-sm font-bold text-slate-950 shadow-[0_0_34px_rgba(34,211,238,0.35)] transition hover:bg-cyan-200"
+              disabled={isSubmitting}
+              className="min-h-12 rounded-none border border-cyan-200 bg-cyan-300 px-6 py-3 text-sm font-bold text-slate-950 shadow-[0_0_34px_rgba(34,211,238,0.35)] transition hover:bg-cyan-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Registration
+              {isSubmitting ? 'Submitting...' : 'Submit Registration'}
             </Button>
           </form>
         </div>
@@ -459,13 +531,13 @@ export default function Home() {
 
       <section className="px-6 pb-20 sm:px-10 lg:px-12">
         <div className="mx-auto max-w-7xl border border-cyan-300/20 bg-[linear-gradient(135deg,rgba(34,211,238,0.16),rgba(2,6,23,0.96))] p-8 text-center shadow-[0_0_80px_rgba(14,165,233,0.18)] sm:p-12">
-          <div className="mx-auto mb-6 w-fit border border-cyan-300/25 bg-white px-3 py-2 shadow-[0_0_34px_rgba(34,211,238,0.2)]">
+          <div className="mx-auto mb-6 w-fit">
             <Image
               src="/dextest-logo.jpeg"
               alt="DexTest logo"
               width={320}
               height={180}
-              className="h-12 w-auto object-contain sm:h-14"
+              className="h-12 w-auto object-contain mix-blend-screen sm:h-14"
             />
           </div>
           <p className="text-sm font-semibold uppercase text-cyan-200">Final CTA</p>
